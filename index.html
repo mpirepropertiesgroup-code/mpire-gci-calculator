@@ -42,7 +42,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   <nav class="tabs" aria-label="Calculator sections">
     <button class="tab active" data-tab="subsale">Subsale</button>
     <button class="tab" data-tab="project">Project</button>
-    <button class="tab" data-tab="team">Team Split</button>
     <button class="tab" data-tab="target">GCI Target</button>
   </nav>
 
@@ -53,14 +52,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
         <div class="field"><label for="sPrice">Harga jualan (RM)</label><input id="sPrice" type="number" min="0" step="any" value="500000"></div>
         <div class="field"><label for="sRate">Kadar komisen (%)</label><input id="sRate" type="number" min="0" step="any" value="3"></div>
         <div class="field"><label for="sExtra">Komisen tambahan (RM)</label><input id="sExtra" type="number" min="0" step="any" value="0"></div>
-        <div class="field"><label for="sAgent">Bahagian ejen (%)</label><input id="sAgent" type="number" min="0" max="100" step="any" value="70"></div>
+        <div class="field"><label for="sAgent">Agent Commission Entitlement (%)</label><input id="sAgent" type="number" min="0" max="100" step="any" value="70"></div>
       </div>
       <button class="action" onclick="calcSubsale()">Kira GCI</button>
       <div class="result" aria-live="polite">
         <div class="muted">GROSS COMMISSION INCOME</div><div class="big" id="sGci">RM 15,000.00</div>
         <div class="rows">
-          <div class="rowline"><span>Agent share</span><strong id="sAgentOut">RM 10,500.00</strong></div>
-          <div class="rowline"><span>Baki agency / pihak lain</span><strong id="sAgencyOut">RM 4,500.00</strong></div>
+          <div class="rowline"><span>Agent Commission Entitlement</span><strong id="sAgentOut">RM 10,500.00</strong></div>
         </div>
       </div>
     </div>
@@ -73,39 +71,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
         <div class="field"><label for="pUnits">Bilangan unit terjual</label><input id="pUnits" type="number" min="0" step="1" value="5"></div>
         <div class="field"><label for="pPrice">Harga setiap unit (RM)</label><input id="pPrice" type="number" min="0" step="any" value="400000"></div>
         <div class="field"><label for="pRate">Kadar komisen (%)</label><input id="pRate" type="number" min="0" step="any" value="2"></div>
-        <div class="field"><label for="pAgent">Bahagian ejen (%)</label><input id="pAgent" type="number" min="0" max="100" step="any" value="70"></div>
+        <div class="field"><label for="pAgent">Agent Commission Entitlement (%)</label><input id="pAgent" type="number" min="0" max="100" step="any" value="60"></div>
       </div>
       <button class="action" onclick="calcProject()">Kira Project GCI</button>
       <div class="result" aria-live="polite">
         <div class="muted">TOTAL PROJECT GCI</div><div class="big" id="pGci">RM 40,000.00</div>
         <div class="rows">
           <div class="rowline"><span>Jumlah nilai jualan</span><strong id="pSales">RM 2,000,000.00</strong></div>
-          <div class="rowline"><span>Agent share</span><strong id="pAgentOut">RM 28,000.00</strong></div>
-          <div class="rowline"><span>Baki agency / pihak lain</span><strong id="pAgencyOut">RM 12,000.00</strong></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="team" class="panel">
-    <div class="card">
-      <h2>Commission Split Calculator</h2>
-      <div class="field"><label for="tGci">Gross commission (RM)</label><input id="tGci" type="number" min="0" step="any" value="15000"></div>
-      <div class="grid">
-        <div class="field"><label for="tAgent">Agent (%)</label><input id="tAgent" type="number" min="0" max="100" step="any" value="70"></div>
-        <div class="field"><label for="tTeam">Team (%)</label><input id="tTeam" type="number" min="0" max="100" step="any" value="10"></div>
-        <div class="field"><label for="tGroup">Group (%)</label><input id="tGroup" type="number" min="0" max="100" step="any" value="5"></div>
-        <div class="field"><label for="tAgency">Agency (%)</label><input id="tAgency" type="number" min="0" max="100" step="any" value="15"></div>
-      </div>
-      <div class="hint" id="splitHint">Jumlah agihan mesti 100%.</div><br>
-      <button class="action" onclick="calcTeam()">Kira Agihan</button>
-      <div class="result" aria-live="polite">
-        <div class="muted">TOTAL COMMISSION</div><div class="big" id="tTotal">RM 15,000.00</div>
-        <div class="rows">
-          <div class="rowline"><span>Agent</span><strong id="tAgentOut">RM 10,500.00</strong></div>
-          <div class="rowline"><span>Team</span><strong id="tTeamOut">RM 1,500.00</strong></div>
-          <div class="rowline"><span>Group</span><strong id="tGroupOut">RM 750.00</strong></div>
-          <div class="rowline"><span>Agency</span><strong id="tAgencyOut">RM 2,250.00</strong></div>
+          <div class="rowline"><span>Agent Commission Entitlement</span><strong id="pAgentOut">RM 28,000.00</strong></div>
         </div>
       </div>
     </div>
@@ -137,15 +110,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 const money=n=>'RM '+(Number.isFinite(n)?n:0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
 const val=id=>Math.max(0,Number(document.getElementById(id).value)||0);
 function pct(id){return Math.min(100,val(id));}
-function calcSubsale(){const g=val('sPrice')*val('sRate')/100+val('sExtra'),a=g*pct('sAgent')/100;document.getElementById('sGci').textContent=money(g);document.getElementById('sAgentOut').textContent=money(a);document.getElementById('sAgencyOut').textContent=money(g-a);}
-function calcProject(){const sales=val('pUnits')*val('pPrice'),g=sales*val('pRate')/100,a=g*pct('pAgent')/100;document.getElementById('pSales').textContent=money(sales);document.getElementById('pGci').textContent=money(g);document.getElementById('pAgentOut').textContent=money(a);document.getElementById('pAgencyOut').textContent=money(g-a);}
-function calcTeam(){const g=val('tGci'),parts=['tAgent','tTeam','tGroup','tAgency'].map(pct),sum=parts.reduce((a,b)=>a+b,0);document.getElementById('splitHint').textContent='Jumlah peratus: '+sum+'%'+(Math.abs(sum-100)<0.001?' ✓':' — jumlah agihan perlu 100%.');document.getElementById('tTotal').textContent=money(g);['tAgentOut','tTeamOut','tGroupOut','tAgencyOut'].forEach((id,i)=>document.getElementById(id).textContent=money(g*parts[i]/100));}
+function calcSubsale(){const g=val('sPrice')*val('sRate')/100+val('sExtra'),a=g*pct('sAgent')/100;document.getElementById('sGci').textContent=money(g);document.getElementById('sAgentOut').textContent=money(a);}
+function calcProject(){const sales=val('pUnits')*val('pPrice'),g=sales*val('pRate')/100,a=g*pct('pAgent')/100;document.getElementById('pSales').textContent=money(sales);document.getElementById('pGci').textContent=money(g);document.getElementById('pAgentOut').textContent=money(a);}
 function calcTarget(){const target=val('gTarget'),avg=val('gAvg'),months=Math.max(1,val('gMonths'));const deals=avg>0?Math.ceil(target/avg):0;document.getElementById('gDeals').textContent=deals+' transaksi';document.getElementById('gMonthly').textContent=(deals/months).toLocaleString('en-MY',{maximumFractionDigits:2});document.getElementById('gMonthlyGci').textContent=money(target/months);document.getElementById('gTotal').textContent=money(deals*avg);}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');}));
 ['sPrice','sRate','sExtra','sAgent'].forEach(id=>document.getElementById(id).addEventListener('input',calcSubsale));
 ['pUnits','pPrice','pRate','pAgent'].forEach(id=>document.getElementById(id).addEventListener('input',calcProject));
-['tGci','tAgent','tTeam','tGroup','tAgency'].forEach(id=>document.getElementById(id).addEventListener('input',calcTeam));
 ['gTarget','gAvg','gMonths'].forEach(id=>document.getElementById(id).addEventListener('input',calcTarget));
-calcSubsale();calcProject();calcTeam();calcTarget();
+calcSubsale();calcProject();calcTarget();
 </script>
 </body></html>
