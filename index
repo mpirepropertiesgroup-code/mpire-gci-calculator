@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPIRE GCI Calculator</title>
+<style>
+:root{--red:#c62828;--ink:#171717;--muted:#6b7280;--line:#e5e7eb;--bg:#f4f5f7;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:linear-gradient(120deg,#111 0%,#292929 72%,#8d1717 100%);color:#fff;padding:26px 18px}
+.wrap{max-width:1050px;margin:auto} .brand{font-size:13px;letter-spacing:2px;color:#e8b5b5;font-weight:700}
+h1{margin:8px 0 5px;font-size:clamp(25px,5vw,38px)}header p{margin:0;color:#ddd}
+main{max-width:1050px;margin:22px auto;padding:0 14px 40px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 14px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;white-space:nowrap;font-weight:700;cursor:pointer}
+.tab.active{background:var(--red);color:white;border-color:var(--red)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px #11108}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:9px;font-size:16px;background:#fff}
+input:focus,select:focus{outline:2px solid #f2b5b5;border-color:var(--red)}
+.field{margin-bottom:13px}.hint{font-size:12px;color:var(--muted);margin-top:5px}
+button.action{background:var(--red);color:white;border:0;border-radius:9px;padding:12px 16px;font-weight:700;cursor:pointer}
+button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:11px 14px;font-weight:700;cursor:pointer}
+.result{background:#171717;color:#fff;border-radius:14px;padding:18px;margin-top:12px}
+.result .big{font-size:clamp(27px,5vw,36px);font-weight:800;color:#8ee0a4;margin:5px 0 14px}
+.rows{display:grid;gap:9px}.rowline{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff26;padding-top:9px;font-size:14px}
+.rowline strong{text-align:right}.muted{color:#bdbdbd;font-size:12px}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.card{padding:15px}.tab{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand">MPIRE PROPERTIES</div>
+  <h1>GCI CALCULATOR</h1>
+  <p>Real Estate Gross Commission Income • Subsale, Project, Commercial & Team Split</p>
+</div></header>
+<main>
+  <nav class="tabs" aria-label="Calculator sections">
+    <button class="tab active" data-tab="subsale">Subsale</button>
+    <button class="tab" data-tab="project">Project</button>
+    <button class="tab" data-tab="team">Team Split</button>
+    <button class="tab" data-tab="target">GCI Target</button>
+  </nav>
+
+  <section id="subsale" class="panel active">
+    <div class="card">
+      <h2>Subsale GCI</h2>
+      <div class="grid">
+        <div class="field"><label for="sPrice">Harga jualan (RM)</label><input id="sPrice" type="number" min="0" step="any" value="500000"></div>
+        <div class="field"><label for="sRate">Kadar komisen (%)</label><input id="sRate" type="number" min="0" step="any" value="3"></div>
+        <div class="field"><label for="sExtra">Komisen tambahan (RM)</label><input id="sExtra" type="number" min="0" step="any" value="0"></div>
+        <div class="field"><label for="sAgent">Bahagian ejen (%)</label><input id="sAgent" type="number" min="0" max="100" step="any" value="70"></div>
+      </div>
+      <button class="action" onclick="calcSubsale()">Kira GCI</button>
+      <div class="result" aria-live="polite">
+        <div class="muted">GROSS COMMISSION INCOME</div><div class="big" id="sGci">RM 15,000.00</div>
+        <div class="rows">
+          <div class="rowline"><span>Agent share</span><strong id="sAgentOut">RM 10,500.00</strong></div>
+          <div class="rowline"><span>Baki agency / pihak lain</span><strong id="sAgencyOut">RM 4,500.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="project" class="panel">
+    <div class="card">
+      <h2>Project / New Development GCI</h2>
+      <div class="grid">
+        <div class="field"><label for="pUnits">Bilangan unit terjual</label><input id="pUnits" type="number" min="0" step="1" value="5"></div>
+        <div class="field"><label for="pPrice">Harga setiap unit (RM)</label><input id="pPrice" type="number" min="0" step="any" value="400000"></div>
+        <div class="field"><label for="pRate">Kadar komisen (%)</label><input id="pRate" type="number" min="0" step="any" value="2"></div>
+        <div class="field"><label for="pAgent">Bahagian ejen (%)</label><input id="pAgent" type="number" min="0" max="100" step="any" value="70"></div>
+      </div>
+      <button class="action" onclick="calcProject()">Kira Project GCI</button>
+      <div class="result" aria-live="polite">
+        <div class="muted">TOTAL PROJECT GCI</div><div class="big" id="pGci">RM 40,000.00</div>
+        <div class="rows">
+          <div class="rowline"><span>Jumlah nilai jualan</span><strong id="pSales">RM 2,000,000.00</strong></div>
+          <div class="rowline"><span>Agent share</span><strong id="pAgentOut">RM 28,000.00</strong></div>
+          <div class="rowline"><span>Baki agency / pihak lain</span><strong id="pAgencyOut">RM 12,000.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team" class="panel">
+    <div class="card">
+      <h2>Commission Split Calculator</h2>
+      <div class="field"><label for="tGci">Gross commission (RM)</label><input id="tGci" type="number" min="0" step="any" value="15000"></div>
+      <div class="grid">
+        <div class="field"><label for="tAgent">Agent (%)</label><input id="tAgent" type="number" min="0" max="100" step="any" value="70"></div>
+        <div class="field"><label for="tTeam">Team (%)</label><input id="tTeam" type="number" min="0" max="100" step="any" value="10"></div>
+        <div class="field"><label for="tGroup">Group (%)</label><input id="tGroup" type="number" min="0" max="100" step="any" value="5"></div>
+        <div class="field"><label for="tAgency">Agency (%)</label><input id="tAgency" type="number" min="0" max="100" step="any" value="15"></div>
+      </div>
+      <div class="hint" id="splitHint">Jumlah agihan mesti 100%.</div><br>
+      <button class="action" onclick="calcTeam()">Kira Agihan</button>
+      <div class="result" aria-live="polite">
+        <div class="muted">TOTAL COMMISSION</div><div class="big" id="tTotal">RM 15,000.00</div>
+        <div class="rows">
+          <div class="rowline"><span>Agent</span><strong id="tAgentOut">RM 10,500.00</strong></div>
+          <div class="rowline"><span>Team</span><strong id="tTeamOut">RM 1,500.00</strong></div>
+          <div class="rowline"><span>Group</span><strong id="tGroupOut">RM 750.00</strong></div>
+          <div class="rowline"><span>Agency</span><strong id="tAgencyOut">RM 2,250.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="target" class="panel">
+    <div class="card">
+      <h2>GCI Target Calculator</h2>
+      <div class="grid">
+        <div class="field"><label for="gTarget">Sasaran GCI (RM)</label><input id="gTarget" type="number" min="0" step="any" value="100000"></div>
+        <div class="field"><label for="gAvg">Purata GCI setiap transaksi (RM)</label><input id="gAvg" type="number" min="0" step="any" value="15000"></div>
+        <div class="field"><label for="gMonths">Tempoh (bulan)</label><input id="gMonths" type="number" min="1" step="1" value="12"></div>
+      </div>
+      <button class="action" onclick="calcTarget()">Kira Keperluan</button>
+      <div class="result" aria-live="polite">
+        <div class="muted">TRANSAKSI DIPERLUKAN</div><div class="big" id="gDeals">7 transaksi</div>
+        <div class="rows">
+          <div class="rowline"><span>Purata transaksi sebulan</span><strong id="gMonthly">0.58</strong></div>
+          <div class="rowline"><span>Anggaran GCI bulanan</span><strong id="gMonthlyGci">RM 8,750.00</strong></div>
+          <div class="rowline"><span>Anggaran GCI tahunan / tempoh</span><strong id="gTotal">RM 105,000.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <p class="note">Nota: Ini kalkulator anggaran. GCI ialah komisen kasar sebelum agihan, kos operasi, cukai atau potongan lain. Pastikan kadar komisen dan pembahagian mengikut perjanjian sebenar, polisi agensi serta peraturan yang berkenaan. Tiada data transaksi disimpan atau dihantar ke server; pengiraan dibuat dalam browser.</p>
+</main>
+<footer>MPIRE PROPERTIES • TRUST • VALUE • RESULTS</footer>
+<script>
+const money=n=>'RM '+(Number.isFinite(n)?n:0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
+const val=id=>Math.max(0,Number(document.getElementById(id).value)||0);
+function pct(id){return Math.min(100,val(id));}
+function calcSubsale(){const g=val('sPrice')*val('sRate')/100+val('sExtra'),a=g*pct('sAgent')/100;document.getElementById('sGci').textContent=money(g);document.getElementById('sAgentOut').textContent=money(a);document.getElementById('sAgencyOut').textContent=money(g-a);}
+function calcProject(){const sales=val('pUnits')*val('pPrice'),g=sales*val('pRate')/100,a=g*pct('pAgent')/100;document.getElementById('pSales').textContent=money(sales);document.getElementById('pGci').textContent=money(g);document.getElementById('pAgentOut').textContent=money(a);document.getElementById('pAgencyOut').textContent=money(g-a);}
+function calcTeam(){const g=val('tGci'),parts=['tAgent','tTeam','tGroup','tAgency'].map(pct),sum=parts.reduce((a,b)=>a+b,0);document.getElementById('splitHint').textContent='Jumlah peratus: '+sum+'%'+(Math.abs(sum-100)<0.001?' ✓':' — jumlah agihan perlu 100%.');document.getElementById('tTotal').textContent=money(g);['tAgentOut','tTeamOut','tGroupOut','tAgencyOut'].forEach((id,i)=>document.getElementById(id).textContent=money(g*parts[i]/100));}
+function calcTarget(){const target=val('gTarget'),avg=val('gAvg'),months=Math.max(1,val('gMonths'));const deals=avg>0?Math.ceil(target/avg):0;document.getElementById('gDeals').textContent=deals+' transaksi';document.getElementById('gMonthly').textContent=(deals/months).toLocaleString('en-MY',{maximumFractionDigits:2});document.getElementById('gMonthlyGci').textContent=money(target/months);document.getElementById('gTotal').textContent=money(deals*avg);}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');}));
+['sPrice','sRate','sExtra','sAgent'].forEach(id=>document.getElementById(id).addEventListener('input',calcSubsale));
+['pUnits','pPrice','pRate','pAgent'].forEach(id=>document.getElementById(id).addEventListener('input',calcProject));
+['tGci','tAgent','tTeam','tGroup','tAgency'].forEach(id=>document.getElementById(id).addEventListener('input',calcTeam));
+['gTarget','gAvg','gMonths'].forEach(id=>document.getElementById(id).addEventListener('input',calcTarget));
+calcSubsale();calcProject();calcTeam();calcTarget();
+</script>
+</body></html>
